@@ -19,12 +19,15 @@ import ru.fastdelivery.domain.delivery.pack.Pack;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
 import ru.fastdelivery.presentation.api.request.CalculatePackagesRequest;
 import ru.fastdelivery.presentation.api.request.CargoPackage;
+import ru.fastdelivery.presentation.api.request.DepartureDto;
 import ru.fastdelivery.presentation.api.response.CalculatePackagesResponse;
 import ru.fastdelivery.usecase.TariffCalculateUseCase;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/calculate/")
@@ -42,24 +45,15 @@ public class CalculateController {
     })
     public CalculatePackagesResponse calculate(
             @Valid @RequestBody CalculatePackagesRequest request) {
-//        var packsWeights = request.packages().stream()
-//                .map(CargoPackage::weight)
-//                .map(Weight::new)
-//                .map(Pack::new)
-//                .toList();
-        List<Pack> packList = new ArrayList<>();
-        for (CargoPackage aPackage : request.packages()) {
-            BigInteger width = aPackage.width();
-            Width widthR = new Width(width);
-            BigInteger height = aPackage.height();
-            Height heightR = new Height(height);
-            BigInteger length = aPackage.length();
-            Length lengthR = new Length(length);
-            BigInteger weight = aPackage.weight();
-            Weight weightR = new Weight(weight);
-            Pack pack = new Pack(weightR, heightR, lengthR, widthR);
-            packList.add(pack);
-        }
+
+        List<Pack> packList = request.packages().stream()
+                .map(cargoPackage -> {
+                    Width widthR = new Width(cargoPackage.width());
+                    Height heightR = new Height(cargoPackage.height());
+                    Length lengthR = new Length(cargoPackage.length());
+                    Weight weightR = new Weight(cargoPackage.weight());
+                    return new Pack(weightR, heightR, lengthR, widthR);
+                }).collect(Collectors.toList());
 
         var shipment = new Shipment(packList, currencyFactory.create(request.currencyCode()));
         var calculatedPrice = tariffCalculateUseCase.calc(shipment);
