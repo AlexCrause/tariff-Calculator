@@ -1,8 +1,9 @@
 package ru.fastdelivery.usecase;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ru.fastdelivery.domain.common.price.Price;
+import ru.fastdelivery.domain.delivery.Departure;
+import ru.fastdelivery.domain.delivery.Destination;
 import ru.fastdelivery.domain.delivery.shipment.Shipment;
 
 import javax.inject.Named;
@@ -13,8 +14,14 @@ import java.math.BigDecimal;
 public class TariffCalculateUseCase {
     private final WeightPriceProvider weightPriceProvider;
     private final VolumePriceProvider volumePriceProvider;
+    private final LatitudeProvider latitudeProvider;
+    private final LongitudeProvider longitudeProvider;
 
-    public Price calc(Shipment shipment) {
+    public Price calc(Shipment shipment, Departure departure, Destination destination) {
+
+        System.out.println(latitudeProvider.minLatitude());
+        System.out.println(longitudeProvider.maxLongitude());
+
         BigDecimal volumeAllPackages = shipment.volumeAllPackages();
         Price cubeMeterCost = volumePriceProvider.cubeMeterCost();
         System.out.println("Цена за кубический метр: " + cubeMeterCost.amount() + " руб.");
