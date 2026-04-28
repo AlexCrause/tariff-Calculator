@@ -18,9 +18,7 @@ public class TariffCalculateUseCase {
     private final LongitudeProvider longitudeProvider;
 
     public Price calc(Shipment shipment, Departure departure, Destination destination) {
-
-        System.out.println(latitudeProvider.minLatitude());
-        System.out.println(longitudeProvider.maxLongitude());
+        validateCoordinates(departure, destination);
 
         BigDecimal volumeAllPackages = shipment.volumeAllPackages();
         Price cubeMeterCost = volumePriceProvider.cubeMeterCost();
@@ -38,14 +36,22 @@ public class TariffCalculateUseCase {
         Price maxed = totalCostByVolume.max(totalCostByWeight);
         System.out.println("Максимальная цена: " + maxed.amount());
         return maxed;
+    }
 
-        //var minimalPrice = weightPriceProvider.minimalPrice();
+    private void validateCoordinates(Departure departure, Destination destination) {
+        if (departure.latitude().compareTo(latitudeProvider.minLatitude()) < 0 ||
+                departure.longitude().compareTo(longitudeProvider.minLongitude()) < 0 ||
+                destination.latitude().compareTo(latitudeProvider.minLatitude()) < 0 ||
+                destination.longitude().compareTo(longitudeProvider.minLongitude()) < 0) {
+            throw new IllegalArgumentException("The latitude/longitude cannot be less than the minimum value!");
+        }
 
-
-//        return weightPriceProvider
-//                .costPerKg()
-//                .multiply(weightAllPackagesKg)
-//                .max(minimalPrice);
+        if (departure.latitude().compareTo(latitudeProvider.maxLatitude()) > 0 ||
+                departure.longitude().compareTo(longitudeProvider.maxLongitude()) > 0 ||
+                destination.latitude().compareTo(latitudeProvider.maxLatitude()) > 0 ||
+                destination.longitude().compareTo(longitudeProvider.maxLongitude()) > 0) {
+            throw new IllegalArgumentException("The latitude/longitude cannot be greater than the maximum value!");
+        }
     }
 
     public Price minimalPrice() {

@@ -62,8 +62,8 @@ public class CalculateController {
                 request.departure().longitude());
 
         Destination destination = new Destination(
-                request.departure().latitude(),
-                request.departure().longitude());
+                request.destination().latitude(),
+                request.destination().longitude());
 
         var shipment = new Shipment(packList, currencyFactory.create(request.currencyCode()));
         var calculatedPrice = tariffCalculateUseCase.calc(shipment, departure, destination);
