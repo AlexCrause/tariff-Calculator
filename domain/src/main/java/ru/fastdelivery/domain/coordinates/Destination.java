@@ -1,4 +1,4 @@
-package ru.fastdelivery.domain.delivery;
+package ru.fastdelivery.domain.coordinates;
 
 import java.math.BigDecimal;
 

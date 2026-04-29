@@ -8,10 +8,18 @@ cost:
     minimal: 350
     cubeMeter: 3500
 
+#coordinates:
+#  latitude:
+#    min: 45
+#    max: 65
+#  longitude:
+#    min: 30
+#    max: 96
+
 coordinates:
   latitude:
-    min: 45
-    max: 65
+    min: -180
+    max: 180
   longitude:
-    min: 30
-    max: 96
+    min: -180
+    max: 180

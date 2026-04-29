@@ -23,4 +23,9 @@ public class Beans {
         return new TariffCalculateUseCase(
                 weightPriceProvider, volumePriceProvider);
     }
+
+    @Bean
+    public DistanceCalculate distanceCalculate() {
+        return new DistanceCalculate();
+    }
 }
