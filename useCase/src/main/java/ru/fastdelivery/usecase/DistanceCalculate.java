@@ -5,7 +5,6 @@ import ru.fastdelivery.domain.coordinates.Destination;
 
 import javax.inject.Named;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 @Named
 public class DistanceCalculate {
@@ -16,21 +15,17 @@ public class DistanceCalculate {
         double hemisphere = 180.;
 
         //координаты двух точек
-        double llat1 = Double.parseDouble(String.valueOf(departure.latitude()));
-        double llong1 = Double.parseDouble(String.valueOf(departure.longitude()));
+        double llat1 = departure.latitude().doubleValue();
+        double llong1 = departure.longitude().doubleValue();
 
-        double llat2 = Double.parseDouble(String.valueOf(destination.latitude()));
-        double llong2 = Double.parseDouble(String.valueOf(destination.longitude()));
+        double llat2 = destination.latitude().doubleValue();
+        double llong2 = destination.longitude().doubleValue();
 
         //в радианах
         double lat1 = llat1 * Math.PI / hemisphere;
-        System.out.println(lat1);
         double lat2 = llat2 * Math.PI / hemisphere;
-        System.out.println(lat2);
         double long1 = llong1 * Math.PI / hemisphere;
-        System.out.println(long1);
         double long2 = llong2 * Math.PI / hemisphere;
-        System.out.println(long2);
 
         //косинусы и синусы широт и разницы долгот
         double cl1 = Math.cos(lat1);
@@ -62,6 +57,9 @@ public class DistanceCalculate {
         System.out.printf("Distance >> %.0f [meters]%n", dist);
         System.out.println("Initial bearing >> " + angledeg + " [degrees]");
 
-        return new BigDecimal(0);
+        double distInKm = dist / 1000;
+        System.out.println(distInKm + " км");
+
+        return new BigDecimal(distInKm);
     }
 }

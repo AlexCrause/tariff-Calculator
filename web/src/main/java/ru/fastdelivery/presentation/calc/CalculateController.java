@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.fastdelivery.domain.common.currency.CurrencyFactory;
 import ru.fastdelivery.domain.common.height.Height;
 import ru.fastdelivery.domain.common.length.Length;
+import ru.fastdelivery.domain.common.price.Price;
 import ru.fastdelivery.domain.common.weight.Weight;
 import ru.fastdelivery.domain.common.width.Width;
 import ru.fastdelivery.domain.coordinates.Departure;
@@ -56,7 +57,7 @@ public class CalculateController {
                 request.departure().latitude(), request.departure().longitude());
         Destination destination = new Destination(
                 request.destination().latitude(), request.destination().longitude());
-        BigDecimal distance = distanceCalculate.calculateInKm(departure, destination);
+        BigDecimal distanceInKm = distanceCalculate.calculateInKm(departure, destination);
 
         List<Pack> packList = request.packages().stream()
                 .map(cargoPackage -> {
@@ -69,8 +70,9 @@ public class CalculateController {
 
         var shipment = new Shipment(packList, currencyFactory.create(request.currencyCode()));
         var calculatedPrice = tariffCalculateUseCase.calc(shipment);
+        Price totalPrice = tariffCalculateUseCase.calcCostDeliveryWithDistance(distanceInKm, calculatedPrice);
         var minimalPrice = tariffCalculateUseCase.minimalPrice();
-        return new CalculatePackagesResponse(calculatedPrice, minimalPrice);
+        return new CalculatePackagesResponse(totalPrice, minimalPrice);
     }
 }
 

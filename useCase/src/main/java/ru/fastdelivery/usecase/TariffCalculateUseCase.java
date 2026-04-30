@@ -6,6 +6,8 @@ import ru.fastdelivery.domain.delivery.shipment.Shipment;
 
 import javax.inject.Named;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 @Named
 @RequiredArgsConstructor
@@ -31,6 +33,19 @@ public class TariffCalculateUseCase {
         Price maxed = totalCostByVolume.max(totalCostByWeight);
         System.out.println("Максимальная цена: " + maxed.amount());
         return maxed;
+    }
+
+    public Price calcCostDeliveryWithDistance(BigDecimal distanceInKm, Price baseCost) {
+        BigDecimal constPrice = new BigDecimal("450");
+        BigDecimal shippingCost;
+        if (distanceInKm.compareTo(constPrice) > 0) {
+            shippingCost = distanceInKm.divide(constPrice, RoundingMode.HALF_UP)
+                    .multiply(baseCost.amount());
+            BigDecimal round = shippingCost.setScale(2, RoundingMode.HALF_UP);
+            return new Price(round, baseCost.currency());
+        }
+        BigDecimal rounded = baseCost.amount().setScale(2, RoundingMode.HALF_UP);
+        return new Price(rounded, baseCost.currency());
     }
 
     public Price minimalPrice() {
