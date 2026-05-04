@@ -6,7 +6,6 @@ import ru.fastdelivery.domain.delivery.shipment.Shipment;
 
 import javax.inject.Named;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 @Named
